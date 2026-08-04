@@ -1,6 +1,17 @@
 <?php
     require 'connection.php';
 
+    /* Exécute une requête préparée et renvoie le statement (SELECT/INSERT/UPDATE/DELETE) */
+    function db_exec($sql, $types = '', ...$params) {
+        global $mysqli;
+        $stmt = mysqli_prepare($mysqli, $sql);
+        if ($types !== '') {
+            mysqli_stmt_bind_param($stmt, $types, ...$params);
+        }
+        mysqli_stmt_execute($stmt);
+        return $stmt;
+    }
+
     function get_all_utilisateur(){
         global $mysqli;
         $query = "SELECT * FROM utilisateur";
@@ -12,38 +23,27 @@
     /* connexion - inscription */
 
     function insert_utilisateur($identifiant, $mdp) {
-        global $mysqli;
-
         $mdp = password_hash($mdp, PASSWORD_DEFAULT);
 
         // Vérifier si identifiant existe
-        $queryCheck = "SELECT idUser FROM utilisateur WHERE identifiant = '$identifiant' LIMIT 1";
-        $resultCheck = mysqli_query($mysqli, $queryCheck);
+        $stmt = db_exec("SELECT idUser FROM utilisateur WHERE identifiant = ? LIMIT 1", 's', $identifiant);
+        $resultCheck = mysqli_stmt_get_result($stmt);
         if (mysqli_fetch_assoc($resultCheck)) {
             return false; // L'identifiant existe déjà
         }
         // Insertion
-        $query = "INSERT INTO utilisateur (identifiant, mdp) VALUES ('$identifiant', '$mdp')";
-        $result = mysqli_query($mysqli, $query);
-        
-        if ($result) {
-            return true; // succès
-        } else {
-            return false; // échec
-        }
+        $stmt = db_exec("INSERT INTO utilisateur (identifiant, mdp) VALUES (?, ?)", 'ss', $identifiant, $mdp);
+        return mysqli_stmt_affected_rows($stmt) > 0;
     }
 
     function connecte_utilisateur($identifiant, $mdp) {
-        global $mysqli;
-        
-
-        $query = "SELECT * FROM utilisateur WHERE identifiant = '$identifiant' LIMIT 1";
-        $result = mysqli_query($mysqli, $query);
+        $stmt = db_exec("SELECT * FROM utilisateur WHERE identifiant = ? LIMIT 1", 's', $identifiant);
+        $result = mysqli_stmt_get_result($stmt);
         $utilisateur = mysqli_fetch_assoc($result);
         if (!$utilisateur) { // Utilisateur introuvable
             return false;
         }
-        if (!password_verify($mdp, $utilisateur['mdp'])) { // Vérification du mot de passe (en clair dans ta BDD)
+        if (!password_verify($mdp, $utilisateur['mdp'])) { // Vérification du mot de passe (haché avec password_hash)
             return false;
         }
         $_SESSION['utilisateur'] = $utilisateur;// Connexion : on enregistre dans la session
@@ -62,112 +62,80 @@
     }
 
     function get_categorie($idCat) {
-        global $mysqli;
-        $result = mysqli_query($mysqli, "SELECT * FROM categorie WHERE idCat = $idCat");
-        return mysqli_fetch_assoc($result);
+        $stmt = db_exec("SELECT * FROM categorie WHERE idCat = ?", 'i', $idCat);
+        return mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
     }
 
     function get_messages_par_categorie($idCat){
-        global $mysqli;
-
         $query = "
             SELECT message.*, utilisateur.identifiant AS auteur
             FROM message
             JOIN utilisateur ON message.IdUser = utilisateur.IdUser
-            WHERE message.IdCat = $idCat
+            WHERE message.IdCat = ?
             ORDER BY message.date DESC
         ";
-
-        $result = mysqli_query($mysqli, $query);
-
-        if (!$result) {
-            die("Erreur SQL : " . mysqli_error($mysqli));
-        }
-
-        $messages = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        return $messages;
+        $stmt = db_exec($query, 'i', $idCat);
+        return mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
     }
 
     function get_messages_par_categorie_trier_par_date($idCat){
-        global $mysqli;
-
         $query = "
             SELECT message.*, utilisateur.identifiant AS auteur
             FROM message
             JOIN utilisateur ON message.IdUser = utilisateur.IdUser
-            WHERE message.IdCat = $idCat
+            WHERE message.IdCat = ?
             ORDER BY message.date DESC
         ";
-
-        $result = mysqli_query($mysqli, $query);
-
-        if (!$result) {
-            die("Erreur SQL : " . mysqli_error($mysqli));
-        }
-
-        $messages = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        return $messages;
+        $stmt = db_exec($query, 'i', $idCat);
+        return mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
     }
 
     function get_messages_par_categorie_trier_par_like($idCat){
-        global $mysqli;
         /* Récupère les messages d'une catégorie triés par nombre de likes */
         $query = "
             SELECT message.*, utilisateur.identifiant AS auteur
             FROM message
             JOIN utilisateur ON message.IdUser = utilisateur.IdUser
-            WHERE message.IdCat = $idCat
+            WHERE message.IdCat = ?
             ORDER BY message.nbrLike DESC
         ";
-        $result = mysqli_query($mysqli, $query);
-        if (!$result) {
-            die("Erreur SQL : " . mysqli_error($mysqli));
-        }
-        $messages = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        return $messages;
+        $stmt = db_exec($query, 'i', $idCat);
+        return mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
     }
 
     function get_messages_par_utilisateur($idUser){
-        global $mysqli;
         /* Récupère les messages d'un utilisateur */
         $query = "
             SELECT message.*, categorie.nom AS categorieNom
             FROM message
             JOIN categorie ON message.IdCat = categorie.idCat
-            WHERE message.IdUser = $idUser
+            WHERE message.IdUser = ?
             ORDER BY message.date DESC
         ";
-        $result = mysqli_query($mysqli, $query);
-        if (!$result) {
-            die("Erreur SQL : " . mysqli_error($mysqli));
-        }
-        $messages = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        return $messages;
+        $stmt = db_exec($query, 'i', $idUser);
+        return mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
     }
 
     function get_messages_par_id($messageId){
-        global $mysqli;
         /* Récupère un message par son ID */
         $query = "
             SELECT message.*, utilisateur.identifiant AS auteur
             FROM message
             JOIN utilisateur ON message.IdUser = utilisateur.IdUser
-            WHERE message.idMsg = $messageId
+            WHERE message.idMsg = ?
         ";
-        $result = mysqli_query($mysqli, $query);
-
-        if (!$result) {
-            die("Erreur SQL : " . mysqli_error($mysqli));
-        }
-        $message = mysqli_fetch_assoc($result);
-        return $message;
-    }   
+        $stmt = db_exec($query, 'i', $messageId);
+        return mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    }
 
 
     /* publier */
 
+    /* Extensions et taille autorisées pour les images jointes à un message */
+    const IMAGE_EXTENSIONS_AUTORISEES = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    const IMAGE_TAILLE_MAX_OCTETS = 5 * 1024 * 1024; // 5 Mo
+
     function insert_message_avec_image($idCat, $idUser, $texte) {
-        global $mysqli;
         // Dossier des uploads
         $upload_dir = "images-upload/";
         // Création du dossier si absent
@@ -181,85 +149,69 @@
             $originalName = basename($_FILES['image']['name']);
             $originalName = str_replace(" ", "-", $originalName); // remplace les espaces
             $originalName = strtolower($originalName);
-            // Création du nom final
-            $timestamp = time();
-            $newName = "$timestamp-$originalName";
-            // Chemin complet pour sauvegarde
-            $imagePath = $upload_dir . $newName;
-            // Upload du fichier
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $imagePath)) {
-                $imageSrc = $imagePath; // ce qui sera enregistré en BDD
+            $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+
+            $extensionValide = in_array($extension, IMAGE_EXTENSIONS_AUTORISEES, true);
+            $tailleValide = $_FILES['image']['size'] <= IMAGE_TAILLE_MAX_OCTETS;
+            $estUneVraieImage = $extensionValide && $tailleValide && getimagesize($_FILES['image']['tmp_name']) !== false;
+
+            if ($estUneVraieImage) {
+                // Création du nom final
+                $timestamp = time();
+                $newName = "$timestamp-$originalName";
+                // Chemin complet pour sauvegarde
+                $imagePath = $upload_dir . $newName;
+                // Upload du fichier
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $imagePath)) {
+                    $imageSrc = $imagePath; // ce qui sera enregistré en BDD
+                }
             }
         }
         $query = "INSERT INTO message (date, texte, imageSrc, nbrLike, nbrDislike, nbrCom, IdCat, IdUser)
-            VALUES (NOW(), '$texte', '$imageSrc', 0, 0, 0, $idCat, $idUser)";
-        $result = mysqli_query($mysqli, $query);
-
-        if ($result) {
-            return true; // succès
-        } else {
-            return false; // échec
-        }
-    }  
+            VALUES (NOW(), ?, ?, 0, 0, 0, ?, ?)";
+        $stmt = db_exec($query, 'ssii', $texte, $imageSrc, $idCat, $idUser);
+        return mysqli_stmt_affected_rows($stmt) > 0;
+    }
 
     /* Supprimer message */
 
     function delete_message($messageId){
-        global $mysqli;
         /* Supprime un message par son ID */
-        $queryReactions = "DELETE FROM reaction WHERE IdMsg = $messageId";
-        mysqli_query($mysqli, $queryReactions);
+        db_exec("DELETE FROM reaction WHERE IdMsg = ?", 'i', $messageId);
         /* Supprime les commentaires associés */
-        $queryCommentaires = "DELETE FROM commentaire WHERE IdMsg = $messageId";
-        mysqli_query($mysqli, $queryCommentaires);
+        db_exec("DELETE FROM commentaire WHERE IdMsg = ?", 'i', $messageId);
         /* Supprime le message */
-        $query = "DELETE FROM message WHERE idMsg = $messageId";
-        $result = mysqli_query($mysqli, $query);
-
-        if ($result) {
-            return true; // succès
-        } else {
-            return false; // échec
-        }
+        $stmt = db_exec("DELETE FROM message WHERE idMsg = ?", 'i', $messageId);
+        return mysqli_stmt_affected_rows($stmt) > 0;
     }
 
     function delete_utilisateur($idUser){
         global $mysqli;
-        $queryMessages = "SELECT idMsg FROM message WHERE IdUser = $idUser";
-        $resultMessages = mysqli_query($mysqli, $queryMessages);
+        $stmt = db_exec("SELECT idMsg FROM message WHERE IdUser = ?", 'i', $idUser);
+        $resultMessages = mysqli_stmt_get_result($stmt);
         while ($message = mysqli_fetch_assoc($resultMessages)) {
             delete_message($message['idMsg']);
         }
-        $queryCommentaires = "DELETE FROM commentaire WHERE IdUser = $idUser";
-        mysqli_query($mysqli, $queryCommentaires);
-        $queryReactions = "DELETE FROM reaction WHERE IdUser = $idUser";
-        mysqli_query($mysqli, $queryReactions);
-        $query = "DELETE FROM utilisateur WHERE IdUser = $idUser";
-        $result = mysqli_query($mysqli, $query);
-
-        if ($result) {
-            return true; // succès
-        } else {
-            return false; // échec
-        }
+        db_exec("DELETE FROM commentaire WHERE IdUser = ?", 'i', $idUser);
+        db_exec("DELETE FROM reaction WHERE IdUser = ?", 'i', $idUser);
+        $stmt = db_exec("DELETE FROM utilisateur WHERE IdUser = ?", 'i', $idUser);
+        return mysqli_stmt_affected_rows($stmt) > 0;
     }
 
     function delete_commentaire($idCom){
-        global $mysqli;
         // Récupère l'IdMsg du commentaire pour mettre à jour le nombre de commentaires
-        $queryGetMsg = "SELECT IdMsg FROM commentaire WHERE IdComment = $idCom";
-        $resultGetMsg = mysqli_query($mysqli, $queryGetMsg);
-        $commentaire = mysqli_fetch_assoc($resultGetMsg);
+        $stmt = db_exec("SELECT IdMsg FROM commentaire WHERE IdComment = ?", 'i', $idCom);
+        $commentaire = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+        if (!$commentaire) {
+            return false; // le commentaire n'existe pas (ou déjà supprimé)
+        }
         $idMsg = $commentaire['IdMsg'];
 
-        $query = "DELETE FROM commentaire WHERE IdComment = $idCom";
-        $result = mysqli_query($mysqli, $query);
+        $stmt = db_exec("DELETE FROM commentaire WHERE IdComment = ?", 'i', $idCom);
 
-        if ($result) {
+        if (mysqli_stmt_affected_rows($stmt) > 0) {
             // Met à jour le nombre de commentaires dans la table message
-            $updateQuery = "UPDATE message SET nbrCom = nbrCom - 1 WHERE idMsg = $idMsg";
-            mysqli_query($mysqli, $updateQuery);
-
+            db_exec("UPDATE message SET nbrCom = nbrCom - 1 WHERE idMsg = ?", 'i', $idMsg);
             return true; // succès
         } else {
             return false; // échec
@@ -270,45 +222,27 @@
     /* paramètre */
 
     function update_biographie($idUser, $biographie){
-        global $mysqli;
         /*  Met à jour la biographie d'un utilisateur */
-        $biographie = mysqli_real_escape_string($mysqli, $biographie);
-        $query = "UPDATE utilisateur SET biographie = '$biographie' WHERE IdUser = $idUser";
-        $result = mysqli_query($mysqli, $query);
-
-        if ($result) {
-            return true; // succès
-        } else {
-            return false; // échec
-        }
+        $stmt = db_exec("UPDATE utilisateur SET biographie = ? WHERE IdUser = ?", 'si', $biographie, $idUser);
+        return $stmt !== false;
     }
 
     function update_identifiant($idUser, $identifiant){
-        global $mysqli;
         /*  Met à jour l'identifiant d'un utilisateur */
-        $queryCheck = "SELECT idUser FROM utilisateur WHERE identifiant = '$identifiant' LIMIT 1";
-        $resultCheck = mysqli_query($mysqli, $queryCheck);
-        if (mysqli_fetch_assoc($resultCheck)) {
+        $stmt = db_exec("SELECT idUser FROM utilisateur WHERE identifiant = ? LIMIT 1", 's', $identifiant);
+        if (mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))) {
             return false; // L'identifiant existe déjà
         }
         /* Met à jour l'identifiant */
-        $query = "UPDATE utilisateur SET identifiant = '$identifiant' WHERE IdUser = $idUser";
-        $result = mysqli_query($mysqli, $query);
-
-        if ($result) {
-            return true; // succès
-        } else {
-            return false; // échec
-        }
+        $stmt = db_exec("UPDATE utilisateur SET identifiant = ? WHERE IdUser = ?", 'si', $identifiant, $idUser);
+        return $stmt !== false;
     }
 
     function reload_session_user($idUser){
-        global $mysqli;
         /* Recharge les données de l'utilisateur dans la session */
-        $query = "SELECT * FROM utilisateur WHERE IdUser = $idUser LIMIT 1";
-        $result = mysqli_query($mysqli, $query);
-        if ($result) {
-            $utilisateur = mysqli_fetch_assoc($result);
+        $stmt = db_exec("SELECT * FROM utilisateur WHERE IdUser = ? LIMIT 1", 'i', $idUser);
+        $utilisateur = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+        if ($utilisateur) {
             // Recharge les données de session
             $_SESSION['utilisateur'] = $utilisateur;
             return true;
@@ -320,22 +254,20 @@
 
 
     function get_all_commentaire_par_message($messageId){
-        global $mysqli;
         /* Récupère tous les commentaires d'un message */
         $query = "SELECT *,utilisateur.identifiant AS auteur
-        FROM commentaire INNER JOIN utilisateur 
-        ON commentaire.IdUser = utilisateur.IdUser WHERE IdMsg = $messageId
+        FROM commentaire INNER JOIN utilisateur
+        ON commentaire.IdUser = utilisateur.IdUser WHERE IdMsg = ?
         ORDER BY dateCom ASC";
-        $result = mysqli_query($mysqli, $query);
-        $commentaire = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        return $commentaire;
+        $stmt = db_exec($query, 'i', $messageId);
+        return mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
     }
 
     function get_all_commentaire(){
         global $mysqli;
-        $query = "SELECT *,utilisateur.identifiant AS auteur 
-        FROM commentaire INNER JOIN utilisateur 
-        ON commentaire.IdUser = utilisateur.IdUser 
+        $query = "SELECT *,utilisateur.identifiant AS auteur
+        FROM commentaire INNER JOIN utilisateur
+        ON commentaire.IdUser = utilisateur.IdUser
         ORDER BY dateCom DESC";
         $result = mysqli_query($mysqli, $query);
         $commentaire = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -352,97 +284,70 @@
     }
 
     function insert_commentaire($idMsg, $idUser, $texte) {
-        global $mysqli;
         /* Insère un commentaire */
         $query = "INSERT INTO commentaire (texte, dateCom, IdMsg, IdUser)
-            VALUES ('$texte', NOW(), $idMsg, $idUser)";
-        $result = mysqli_query($mysqli, $query);
-        if ($result) {
+            VALUES (?, NOW(), ?, ?)";
+        $stmt = db_exec($query, 'sii', $texte, $idMsg, $idUser);
+        if (mysqli_stmt_affected_rows($stmt) > 0) {
             // Met à jour le nombre de commentaires dans la table message
-            $updateQuery = "UPDATE message SET nbrCom = nbrCom + 1 WHERE idMsg = $idMsg";
-            mysqli_query($mysqli, $updateQuery);
+            db_exec("UPDATE message SET nbrCom = nbrCom + 1 WHERE idMsg = ?", 'i', $idMsg);
             return true; // succès
         } else {
             return false; // échec
         }
-        
     }
 
     function insert_reaction_like($messageId, $userId){
-        global $mysqli;
         // Vérifie si l'utilisateur a déjà liké le message
-        $queryCheck = "SELECT * FROM reaction WHERE IdMsg = $messageId AND IdUser = $userId AND IdType = 1 LIMIT 1";
-        $resultCheck = mysqli_query($mysqli, $queryCheck);
+        $stmt = db_exec("SELECT * FROM reaction WHERE IdMsg = ? AND IdUser = ? AND IdType = 1 LIMIT 1", 'ii', $messageId, $userId);
         // Si oui, on supprime le like
-        if (mysqli_fetch_assoc($resultCheck)) {
-            $queryDelete = "DELETE FROM reaction WHERE IdMsg = $messageId AND IdUser = $userId AND IdType = 1";
-            mysqli_query($mysqli, $queryDelete);
-            $updateQuery = "UPDATE message SET nbrLike = nbrLike - 1 WHERE idMsg = $messageId";
-            mysqli_query($mysqli, $updateQuery);
+        if (mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))) {
+            db_exec("DELETE FROM reaction WHERE IdMsg = ? AND IdUser = ? AND IdType = 1", 'ii', $messageId, $userId);
+            db_exec("UPDATE message SET nbrLike = nbrLike - 1 WHERE idMsg = ?", 'i', $messageId);
             return true; // succès
         }
         // Vérifie si l'utilisateur a déjà disliké le message
-        $queryCheckDislike = "SELECT * FROM reaction WHERE IdMsg = $messageId AND IdUser = $userId AND IdType = 2 LIMIT 1";
-        $resultCheckDislike = mysqli_query($mysqli, $queryCheckDislike);
+        $stmt = db_exec("SELECT * FROM reaction WHERE IdMsg = ? AND IdUser = ? AND IdType = 2 LIMIT 1", 'ii', $messageId, $userId);
         // Si oui, on supprime le dislike
-        if (mysqli_fetch_assoc($resultCheckDislike)) {
-            $queryDeleteDislike = "DELETE FROM reaction WHERE IdMsg = $messageId AND IdUser = $userId AND IdType = 2";
-            mysqli_query($mysqli, $queryDeleteDislike);
-            $updateQueryDislike = "UPDATE message SET nbrDislike = nbrDislike - 1 WHERE idMsg = $messageId";
-            mysqli_query($mysqli, $updateQueryDislike);
+        if (mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))) {
+            db_exec("DELETE FROM reaction WHERE IdMsg = ? AND IdUser = ? AND IdType = 2", 'ii', $messageId, $userId);
+            db_exec("UPDATE message SET nbrDislike = nbrDislike - 1 WHERE idMsg = ?", 'i', $messageId);
         }
         // Insère le like
-        $query = "INSERT INTO reaction (IdMsg, IdUser, IdType)
-            VALUES ($messageId, $userId, 1)";
-        $result = mysqli_query($mysqli, $query);
-        if ($result) {
+        $stmt = db_exec("INSERT INTO reaction (IdMsg, IdUser, IdType) VALUES (?, ?, 1)", 'ii', $messageId, $userId);
+        if (mysqli_stmt_affected_rows($stmt) > 0) {
             // Met à jour le nombre de likes dans la table message
-            $updateQuery = "UPDATE message SET nbrLike = nbrLike + 1 WHERE idMsg = $messageId";
-            mysqli_query($mysqli, $updateQuery);
-
+            db_exec("UPDATE message SET nbrLike = nbrLike + 1 WHERE idMsg = ?", 'i', $messageId);
             return true; // succès
         } else {
             return false; // échec
         }
     }
-    
+
     function insert_reaction_dislike($messageId, $userId){
-        global $mysqli;
         // Vérifie si l'utilisateur a déjà disliké le message
-        $queryCheck = "SELECT * FROM reaction WHERE IdMsg = $messageId AND IdUser = $userId AND IdType = 2 LIMIT 1";
-        $resultCheck = mysqli_query($mysqli, $queryCheck);
+        $stmt = db_exec("SELECT * FROM reaction WHERE IdMsg = ? AND IdUser = ? AND IdType = 2 LIMIT 1", 'ii', $messageId, $userId);
         // Si oui, on supprime le dislike
-        if (mysqli_fetch_assoc($resultCheck)) {
-            $queryDelete = "DELETE FROM reaction WHERE IdMsg = $messageId AND IdUser = $userId AND IdType = 2";
-            mysqli_query($mysqli, $queryDelete);
-            $updateQuery = "UPDATE message SET nbrDislike = nbrDislike - 1 WHERE idMsg = $messageId";
-            mysqli_query($mysqli, $updateQuery);
+        if (mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))) {
+            db_exec("DELETE FROM reaction WHERE IdMsg = ? AND IdUser = ? AND IdType = 2", 'ii', $messageId, $userId);
+            db_exec("UPDATE message SET nbrDislike = nbrDislike - 1 WHERE idMsg = ?", 'i', $messageId);
             return true; // succès
         }
         // Vérifie si l'utilisateur a déjà liké le message
-        $queryCheckLike = "SELECT * FROM reaction WHERE IdMsg = $messageId AND IdUser = $userId AND IdType = 1 LIMIT 1";
-        $resultCheckLike = mysqli_query($mysqli, $queryCheckLike);
+        $stmt = db_exec("SELECT * FROM reaction WHERE IdMsg = ? AND IdUser = ? AND IdType = 1 LIMIT 1", 'ii', $messageId, $userId);
         // Si oui, on supprime le like
-        if (mysqli_fetch_assoc($resultCheckLike)) {
-            $queryDeleteLike = "DELETE FROM reaction WHERE IdMsg = $messageId AND IdUser = $userId AND IdType = 1";
-            mysqli_query($mysqli, $queryDeleteLike);
-            $updateQueryLike = "UPDATE message SET nbrLike = nbrLike - 1 WHERE idMsg = $messageId";
-            mysqli_query($mysqli, $updateQueryLike);
+        if (mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))) {
+            db_exec("DELETE FROM reaction WHERE IdMsg = ? AND IdUser = ? AND IdType = 1", 'ii', $messageId, $userId);
+            db_exec("UPDATE message SET nbrLike = nbrLike - 1 WHERE idMsg = ?", 'i', $messageId);
         }
         // Insère le dislike
-        $query = "INSERT INTO reaction (IdMsg, IdUser, IdType)
-            VALUES ($messageId, $userId, 2)";
-        $result = mysqli_query($mysqli, $query);
-        if ($result) {
+        $stmt = db_exec("INSERT INTO reaction (IdMsg, IdUser, IdType) VALUES (?, ?, 2)", 'ii', $messageId, $userId);
+        if (mysqli_stmt_affected_rows($stmt) > 0) {
             // Met à jour le nombre de dislikes dans la table message
-            $updateQuery = "UPDATE message SET nbrDislike = nbrDislike + 1 WHERE idMsg = $messageId";
-            mysqli_query($mysqli, $updateQuery);
+            db_exec("UPDATE message SET nbrDislike = nbrDislike + 1 WHERE idMsg = ?", 'i', $messageId);
             return true; // succès
         } else {
             return false; // échec
         }
     }
-    
 ?>
-
-

@@ -249,7 +249,8 @@
 </div>
 {% endfor %}
 
-<form action="/SAE3012/commentaires" method="post">
+<form action="{{ base_path }}/commentaires" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <input type="hidden" name="messageId" value="{{ messages.IdMsg }}">
     <textarea name="texte" placeholder="Écrire un commentaire..."></textarea>
     <button type="submit">Publier</button>

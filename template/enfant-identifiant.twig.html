@@ -120,12 +120,13 @@
 
 
 {% block contenu %}
-<form method="post" action="/SAE3012/identifiant">
+<form method="post" action="{{ base_path }}/identifiant">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <label for="identifiant">Ecrivez votre nouvel identifiant :</label>
     <textarea id="identifiant" name="identifiant"></textarea>
     <div class="buttons">
         <button type="submit">Enregistrer</button>
-        <a href="/SAE3012/parametre"><button type="button">Annuler</button></a>
+        <a href="{{ base_path }}/parametre"><button type="button">Annuler</button></a>
     </div>
 </form>
 {% endblock %}

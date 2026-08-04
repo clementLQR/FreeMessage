@@ -139,7 +139,8 @@
 
 
 {% block contenu %}
-<form method="post" action="/SAE3012/publier" enctype="multipart/form-data" class="formPublier">
+<form method="post" action="{{ base_path }}/publier" enctype="multipart/form-data" class="formPublier">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <div>
         <label for="image"><strong>Image</strong></label>
         <input type="file" name="image" accept="image/*">

@@ -10,8 +10,12 @@
     $pathExplode = explode('/', trim($path, '/')); // enlève les / inutiles
 
 
-    $section = $pathExplode[1] ?? null;  
-    $action  = $pathExplode[2] ?? null; 
+    $section = $pathExplode[1] ?? null;
+    $action  = $pathExplode[2] ?? null;
+
+    // dossier de montage de l'application (ex: /SAE3012, /FreeMessage), utilisé pour toutes les redirections
+    $BASE_PATH = '/' . ($pathExplode[0] ?? '');
+    $twig->addGlobal('base_path', $BASE_PATH);
 
     /* debug */
 
@@ -25,9 +29,20 @@
     // print_r($_POST);
     // echo '<br>';
 
-    /*  si une session n'existe pas et que l'utilisateur n'est pas sur la page de connexion-inscription */
-    if ($_SESSION == null && $section != 'connexion-inscription'){
-        header('Location: /SAE3012/connexion-inscription' );
+    /* toute requête POST doit présenter un jeton CSRF valide */
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+            $option = "Erreur : jeton de sécurité invalide, veuillez réessayer.";
+            afficher_page_erreur($option);
+            exit;
+        }
+    }
+
+try {
+
+    /*  si l'utilisateur n'est pas connecté et n'est pas sur la page de connexion-inscription */
+    if (empty($_SESSION['utilisateur']) && $section != 'connexion-inscription'){
+        header('Location: '.$BASE_PATH.'/connexion-inscription');
         afficher_page_connexion_inscription();
     }
 
@@ -305,7 +320,7 @@
             $idCat = $_POST['idCat'];
             $idUser = $_SESSION['utilisateur']['IdUser'];
             $texte = $_POST['texte'];
-            header('Location: /SAE3012' );
+            header('Location: '.$BASE_PATH);
             return publier_message($idCat, $idUser, $texte);
         }
         $utilisateur = $_SESSION['utilisateur'];
@@ -377,4 +392,8 @@
         afficher_page_erreur($option);
     }
 
+} catch (\Throwable $e) {
+    // on évite d'exposer la stack trace / les requêtes SQL à l'utilisateur
+    afficher_page_erreur("ERREUR : une erreur interne est survenue");
+}
 ?>

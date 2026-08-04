@@ -283,7 +283,8 @@
 
 {% block contenu %}
 <!-- <p>Liste des messages de la categorie {{categorie.nom}}</p> -->
-<form class="filtres" action="/SAE3012/{{categorie.nom}}" method="post">
+<form class="filtres" action="{{ base_path }}/{{categorie.nom}}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <label for="tri">Trier par :</label>
     <select name="tri" id="tri">
         <option>Plus récent</option>
@@ -303,18 +304,21 @@
         {% endif %}
         <p class="texte">{{ message.texte }}</p>
         <div class="stats">
-            <form action="/SAE3012/commentaires" method="post">
+            <form action="{{ base_path }}/commentaires" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="messageId" value="{{ message.IdMsg }}">
                 <button type="submit" class="commentBtn"><img src="images/commenter.png"><span>{{
                         message.nbrCom }}</span></button>
             </form>
-            <form action="/SAE3012/{{ categorie.nom }}" method="post">
+            <form action="{{ base_path }}/{{ categorie.nom }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="messageId" value="{{ message.IdMsg }}">
                 <input type="hidden" name="like" value="1">
                 <button type="submit" class="likeBtn"><img src="images/like.png"><span>{{ message.nbrLike
                         }}</span></button>
             </form>
-            <form action="{{ categorie.nom }}" method="post">
+            <form action="{{ base_path }}/{{ categorie.nom }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="messageId" value="{{ message.IdMsg }}">
                 <input type="hidden" name="dislike" value="2">
                 <button type="submit" class="dislikBtn"><img src="images/dislike.png"><span>{{

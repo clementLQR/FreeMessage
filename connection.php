@@ -8,5 +8,5 @@
     // 4 paramètres d'entrée :
     // 1- l'hôte, 2- l'utilisateur, 3- le mot de passe,
     // 4- le nom de la base de données
-    $mysqli = mysqli_connect('localhost', 'root', '', 'sae3012');
+    $mysqli = mysqli_connect('localhost', 'root', '', 'freemessagev2');
 ?>

@@ -119,11 +119,12 @@
 
 {% block contenu %}
 <div>
-    <a href="/SAE3012/biographie"><button type="submit">Modifier la biographie</button></a>
+    <a href="{{ base_path }}/biographie"><button type="submit">Modifier la biographie</button></a>
 
-    <a href="/SAE3012/identifiant"><button type="submit">Changer d'identifiant</button></a>
+    <a href="{{ base_path }}/identifiant"><button type="submit">Changer d'identifiant</button></a>
 
-    <form method="post" action="/SAE3012/deconnexion">
+    <form method="post" action="{{ base_path }}/deconnexion">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <button class="deco" type="submit"><img src="images/se-deconnecter.png"> Déconnexion</button>
     </form>
 </div>

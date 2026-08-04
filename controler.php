@@ -8,10 +8,11 @@
     }
 
     function inscription_utilisateur($identifiant, $mdp){
+        global $BASE_PATH;
         $success = insert_utilisateur($identifiant, $mdp);
         if ($success) {
             connecte_utilisateur($identifiant, $mdp);
-            header('Location: http://localhost/SAE3012');
+            header('Location: '.$BASE_PATH);
             return afficher_page_accueil();
         } else {
             $option = "Erreur d'inscription";
@@ -20,9 +21,10 @@
     }
 
     function connexion_utilisateur($identifiant, $mdp){
+        global $BASE_PATH;
         $success = connecte_utilisateur($identifiant, $mdp);
         if ($success) {
-            header('Location: http://localhost/SAE3012' );
+            header('Location: '.$BASE_PATH);
             return afficher_page_accueil();
         } else {
             $option = "Erreur de connexion";
@@ -107,9 +109,10 @@
     }
 
     function update_bio($idUser, $biographie, $utilisateur){
+        global $BASE_PATH;
         $success = update_biographie($idUser, $biographie);
         if ($success) {
-            header('Location: http://localhost/SAE3012/profil' );
+            header('Location: '.$BASE_PATH.'/profil');
             reload_session_user($idUser);
             return afficher_page_profil($utilisateur);
         } else {
@@ -118,9 +121,10 @@
     }
 
     function update_pseudo($idUser, $identifiant, $utilisateur){
+        global $BASE_PATH;
         $success = update_identifiant($idUser, $identifiant);
         if ($success) {
-            header('Location: http://localhost/SAE3012/profil' );
+            header('Location: '.$BASE_PATH.'/profil');
             reload_session_user($idUser);
             return afficher_page_profil($utilisateur);
         } else {
@@ -135,8 +139,8 @@
     }
 
     function afficher_page_deconnexion(){
-        global $twig;
-        header('Location: http://localhost/SAE3012' );
+        global $twig, $BASE_PATH;
+        header('Location: '.$BASE_PATH);
         echo $twig -> render('enfant-connexion-inscription.twig.html');
     }
 
@@ -175,12 +179,10 @@
     }
 
     function supprimer_utilisateur($userId){
-        print_r("supprimer_utilisateur called with userId: $userId\n");
         delete_utilisateur($userId);
     }
 
     function supprimer_commentaire($commentaireId){
-        print_r("supprimer_commentaire called with commentaireId: $commentaireId\n");
         delete_commentaire($commentaireId);
     }
 

@@ -121,12 +121,13 @@
 
 {% block contenu %}
 
-<form method="post" action="/SAE3012/biographie">
+<form method="post" action="{{ base_path }}/biographie">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <label for="biographie">Rédigez votre biographie : </label>
     <textarea id="biographie" name="biographie"></textarea>
     <div class="buttons">
         <button type="submit">Enregistrer</button>
-        <a href="/SAE3012/parametre"><button type="button">Annuler</button></a>
+        <a href="{{ base_path }}/parametre"><button type="button">Annuler</button></a>
     </div>
 </form>
 

@@ -155,7 +155,8 @@
                 <td>{{ utilisateur.identifiant }}</td>
                 <td>{{ utilisateur.biographie }}</td>
                 <td>
-                    <form action="/SAE3012/admin" method="post">
+                    <form action="{{ base_path }}/admin" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <input type="hidden" name="supprimerUserId" value="{{ utilisateur.IdUser }}">
                         <button type="submit">Supprimer</button>
                     </form>
@@ -188,7 +189,8 @@
 
                 <p class="texte">{{ message.texte }}</p>
             </div>
-            <form action="/SAE3012/admin" method="post">
+            <form action="{{ base_path }}/admin" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="supprimerMessageId" value="{{ message.IdMsg }}">
                 <button type="submit">Supprimer le message</button>
             </form>      
@@ -199,7 +201,8 @@
                 {% if commentaire.IdMsg == message.IdMsg %}
                     <div class="commentaire">
                         <p><strong>@{{ commentaire.auteur }}:</strong> {{ commentaire.texte }}</p>
-                        <form action="/SAE3012/admin" method="post">
+                        <form action="{{ base_path }}/admin" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                             <input type="hidden" name="supprimerCommentaireId" value="{{ commentaire.IdComment }}">
                             <button type="submit">Supprimer</button>
                         </form>
