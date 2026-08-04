@@ -40,33 +40,42 @@
     
     function afficher_page_categorie($idCat){
         global $twig;
-        echo $twig -> render('enfant-categorie.twig.html', 
+        $userId = $_SESSION['utilisateur']['IdUser'];
+        echo $twig -> render('enfant-categorie.twig.html',
         ['categorie' => get_categorie($idCat),
-        "messages" => get_messages_par_categorie($idCat),
-        "utilisateur" => get_all_utilisateur()]);
+        "messages" => get_messages_par_categorie($idCat, $userId),
+        "utilisateur" => get_all_utilisateur(),
+        "tri" => 'recent']);
     }
 
     function afficher_page_categorie_trier_par_date($idCat){
         global $twig;
-        echo $twig -> render('enfant-categorie.twig.html', 
+        $userId = $_SESSION['utilisateur']['IdUser'];
+        echo $twig -> render('enfant-categorie.twig.html',
         ['categorie' => get_categorie($idCat),
-        "messages" => get_messages_par_categorie_trier_par_date($idCat),
-        "utilisateur" => get_all_utilisateur()]);
+        "messages" => get_messages_par_categorie_trier_par_date($idCat, $userId),
+        "utilisateur" => get_all_utilisateur(),
+        "tri" => 'recent']);
     }
 
     function afficher_page_categorie_trier_par_likes($idCat){
         global $twig;
-        echo $twig -> render('enfant-categorie.twig.html', 
+        $userId = $_SESSION['utilisateur']['IdUser'];
+        echo $twig -> render('enfant-categorie.twig.html',
         ['categorie' => get_categorie($idCat),
-        "messages" => get_messages_par_categorie_trier_par_like($idCat),
-        "utilisateur" => get_all_utilisateur()]);
+        "messages" => get_messages_par_categorie_trier_par_like($idCat, $userId),
+        "utilisateur" => get_all_utilisateur(),
+        "tri" => 'likes']);
     }
 
     function afficher_page_commentaire($messageId){
         global $twig;
-        echo $twig -> render('enfant-commentaire.twig.html', 
+        $userId = $_SESSION['utilisateur']['IdUser'];
+        $message = get_messages_par_id($messageId, $userId);
+        echo $twig -> render('enfant-commentaire.twig.html',
         ["commentaires" => get_all_commentaire_par_message($messageId),
-        "messages" => get_messages_par_id($messageId),
+        "messages" => $message,
+        "categorie" => get_categorie($message['IdCat']),
         "utilisateurs" => get_all_utilisateur()
         ]);
     }
@@ -157,6 +166,18 @@
     function dislike_message($messageId, $userId){
         // print_r( "dislike_message called with messageId: $messageId, userId: $userId\n");
         insert_reaction_dislike($messageId, $userId);
+    }
+
+    function get_reactions_message($messageId, $userId){
+        $message = get_messages_par_id($messageId, $userId);
+        $userReaction = null;
+        if ($message['userReactionType'] == 1) { $userReaction = 'like'; }
+        else if ($message['userReactionType'] == 2) { $userReaction = 'dislike'; }
+        return [
+            'nbrLike' => (int) $message['nbrLike'],
+            'nbrDislike' => (int) $message['nbrDislike'],
+            'userReaction' => $userReaction
+        ];
     }
 
     function afficher_page_admin() {

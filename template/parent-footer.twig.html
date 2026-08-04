@@ -6,91 +6,171 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <style>
-    /* -------------------MOBILE------------------- */
+
+    /* -------------------GLOBAL------------------ */
+
+    :root {
+        --fond: #F4F7F9;
+        --surface: #FFFFFF;
+        --bleu-clair: #A9D0E0;
+        --bleu-profond: #1C6E8C;
+        --texte: #1B2228;
+        --texte-2: #5A6672;
+        --bordure: #DDE4E9;
+        --rouge: #B3261E;
+    }
+
     * {
         margin: 0;
         padding: 0;
-        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        box-sizing: border-box;
+        font-family: 'Public Sans', sans-serif;
+        font-weight: 400;
+        scrollbar-width: thin;
+        scrollbar-color: var(--bleu-profond) transparent;
     }
 
     body {
-        background-color: #212529;
-        color: white;
-        min-height: 100vh;
-        height: auto;
-        overflow-y: auto;
-        max-width: 90%;
-        margin: auto;
-        padding-top: 20px;
-        padding-bottom: 80px;
-        
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
-    h1 {
+    header {
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--bordure);
+    }
+
+    h1, h2, h3, h4{
+        font-family: 'Bricolage Grotesque', sans-serif;
+        font-weight: 700;
+    }
+
+    h1{
+        text-transform: uppercase;
+        font-size: 1.7em;
+    }
+
+    .btn-primary, .btn-secondary, .btn-rouge {
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: var(--bleu-profond);
+        color: var(--surface);
+        border: 2px solid var(--bleu-profond);
+    }
+
+    .btn-primary img {
+        width: 20px;
+        height: 20px;
+        filter: invert(1) ;
+    }
+
+    .btn-primary:hover, .btn-secondary:hover, .btn-rouge:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background-color: var(--surface);
+        border: 2px solid var(--bleu-profond);
+        color: var(--bleu-profond);
+    }
+
+    .btn-rouge {
+        background-color: var(--surface);
+        color: var(--rouge);
+        border: 2px solid var(--rouge);
+    }
+
+    .radio-toggle {
+        display: flex;
+        width: fit-content;
+        border: 2px solid var(--bordure);
+        background-color: var(--surface);
+        border-radius: 10px;
+        overflow: hidden;
+        padding: 2px;
+    }
+
+    .radio-toggle input[type="radio"] {
+        display: none;
+    }
+
+    .radio-toggle label {
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--texte-2);
+        background-color: var(--surface);
+        transition: background-color 0.3s ease;
+        border-radius: 7px;
+        width: 100%;
         text-align: center;
     }
 
+    .radio-toggle input[type="radio"]:checked + label {
+        background-color: var(--bleu-clair);
+        color: var(--bleu-profond);
+    }
+
     footer {
-        display: flex;
         position: fixed;
-        bottom: 0px;
-        right: 0px;
-        left: 0px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: var(--surface);
+        border-top: 1px solid var(--bordure);
+        display: flex;
         justify-content: space-around;
-        padding-bottom: 10px;
-        padding-top: 10px;
-        background-color: rgb(110, 203, 243);
+        padding: 10px 0;
     }
 
-    /* main {
-        margin-bottom: 80px;
-    } */
-
-
-    footer img {
-        width: 25px;
+    footer a {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: var(--texte-2);
+        font-size: 0.75em;
     }
 
-    /* ------------TABLETTE-------------------- */
-
-    footer img {
-        width: 45px;
+    footer a img {
+        filter: invert(30%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(90%) contrast(85%);
     }
 
-    /* ------------ORDINATEUR-------------------- */
-    @media only screen and (min-width : 1024px) {
-        body {
-            max-width: 95%;
-            padding-left: 70px;
-        }
+    main {
+        flex: 1;
+        min-height: 0;
+        background-color: var(--fond);
+        color: var(--texte);
+        padding: 20px;
 
-        main {
-            max-width: 80%;
-            margin: auto;
-        }
+        margin-bottom: 50px; /* Espace pour le footer */
 
-        footer {
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 50px;
-            width: 60px;
-            height: 100vh;
-            padding-left: 12px;
-            padding-right: 12px;
-        }
-
-        footer a {
-            margin: 0;
-        }
-
-        footer img {
-            width: 35px;
-        }
-
+        overflow-x: hidden;
+        overflow-y: auto;
     }
+
+    /* -------------------TABLETTE----------------- */
+
+
+
+    /* -------------------DESKTOP------------------ */
+   
 </style>
 {% block style %}{% endblock %}
 
@@ -108,10 +188,10 @@
         {% endblock %}
     </main>
 
-    <footer>
-        <a href="{{ base_path }}/"><img src="images/accueil.png" alt="accueil"></a>
-        <a href="{{ base_path }}/publier"><img src="images/poster.png" alt="publier"></a>
-        <a href="{{ base_path }}/profil"><img src="images/profil.png" alt="profil"></a>
+    <footer class="footer">
+        <a href="{{ base_path }}/"><img src="{{ base_path }}/images/accueil.svg" alt="accueil">Accueil</a>
+        <a href="{{ base_path }}/publier"><img src="{{ base_path }}/images/publier.svg" alt="publier">Publier</a>
+        <a href="{{ base_path }}/profil"><img src="{{ base_path }}/images/profil.svg" alt="profil">Profil</a>
     </footer>
 
 </body>

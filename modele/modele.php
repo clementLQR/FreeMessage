@@ -66,40 +66,43 @@
         return mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
     }
 
-    function get_messages_par_categorie($idCat){
+    function get_messages_par_categorie($idCat, $userId){
         $query = "
-            SELECT message.*, utilisateur.identifiant AS auteur
+            SELECT message.*, utilisateur.identifiant AS auteur, reaction.IdType AS userReactionType
             FROM message
             JOIN utilisateur ON message.IdUser = utilisateur.IdUser
+            LEFT JOIN reaction ON reaction.IdMsg = message.idMsg AND reaction.IdUser = ?
             WHERE message.IdCat = ?
             ORDER BY message.date DESC
         ";
-        $stmt = db_exec($query, 'i', $idCat);
+        $stmt = db_exec($query, 'ii', $userId, $idCat);
         return mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
     }
 
-    function get_messages_par_categorie_trier_par_date($idCat){
+    function get_messages_par_categorie_trier_par_date($idCat, $userId){
         $query = "
-            SELECT message.*, utilisateur.identifiant AS auteur
+            SELECT message.*, utilisateur.identifiant AS auteur, reaction.IdType AS userReactionType
             FROM message
             JOIN utilisateur ON message.IdUser = utilisateur.IdUser
+            LEFT JOIN reaction ON reaction.IdMsg = message.idMsg AND reaction.IdUser = ?
             WHERE message.IdCat = ?
             ORDER BY message.date DESC
         ";
-        $stmt = db_exec($query, 'i', $idCat);
+        $stmt = db_exec($query, 'ii', $userId, $idCat);
         return mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
     }
 
-    function get_messages_par_categorie_trier_par_like($idCat){
+    function get_messages_par_categorie_trier_par_like($idCat, $userId){
         /* Récupère les messages d'une catégorie triés par nombre de likes */
         $query = "
-            SELECT message.*, utilisateur.identifiant AS auteur
+            SELECT message.*, utilisateur.identifiant AS auteur, reaction.IdType AS userReactionType
             FROM message
             JOIN utilisateur ON message.IdUser = utilisateur.IdUser
+            LEFT JOIN reaction ON reaction.IdMsg = message.idMsg AND reaction.IdUser = ?
             WHERE message.IdCat = ?
             ORDER BY message.nbrLike DESC
         ";
-        $stmt = db_exec($query, 'i', $idCat);
+        $stmt = db_exec($query, 'ii', $userId, $idCat);
         return mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
     }
 
@@ -116,15 +119,16 @@
         return mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
     }
 
-    function get_messages_par_id($messageId){
+    function get_messages_par_id($messageId, $userId){
         /* Récupère un message par son ID */
         $query = "
-            SELECT message.*, utilisateur.identifiant AS auteur
+            SELECT message.*, utilisateur.identifiant AS auteur, reaction.IdType AS userReactionType
             FROM message
             JOIN utilisateur ON message.IdUser = utilisateur.IdUser
+            LEFT JOIN reaction ON reaction.IdMsg = message.idMsg AND reaction.IdUser = ?
             WHERE message.idMsg = ?
         ";
-        $stmt = db_exec($query, 'i', $messageId);
+        $stmt = db_exec($query, 'ii', $userId, $messageId);
         return mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
     }
 

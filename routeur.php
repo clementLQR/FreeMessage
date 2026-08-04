@@ -90,33 +90,29 @@ try {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['messageId']) && isset($_POST['texte'])){
             $idMsg = $_POST['messageId'];
             $idUser = $_SESSION['utilisateur']['IdUser'];
-            $texte = $_POST['texte'];
-            publier_commentaire($idMsg, $idUser, $texte);
-            return afficher_page_commentaire($idMsg);
+            $texte = trim($_POST['texte']);
+            if ($texte !== ''){
+                publier_commentaire($idMsg, $idUser, $texte);
+            }
+            // redirection (PRG) : un rechargement de la page ne renvoie plus le formulaire
+            header('Location: '.$BASE_PATH.'/commentaires/'.$idMsg);
+            exit;
         }
 
         else if ($_SERVER['REQUEST_METHOD'] == 'POST'){
             $messageId = $_POST['messageId'];
-            afficher_page_commentaire($messageId);        
+            header('Location: '.$BASE_PATH.'/commentaires/'.$messageId);
+            exit;
         }
-    }
-    else if ($section == 'commentaires'){
+
+        else if ($action){
+            afficher_page_commentaire($action);
+        }
     }
 
-    /* si l'utilisateur est sur une page de catégorie jeux video */
-    else if ($section == 'jeux%20video'){ 
-        /* gestion du tri */ 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tri'])) {
-            if ($_POST['tri'] === 'Plus récent') {
-                return afficher_page_categorie_trier_par_date(1);
-            } 
-            else if ($_POST['tri'] === 'Plus de Likes') {
-                return afficher_page_categorie_trier_par_likes(1);
-            }
-        }
-        /* gestion des likes et dislikes */
-        else if ($_SERVER['REQUEST_METHOD'] == 'POST')
-        {
+    /* réaction (like/dislike) envoyée en asynchrone depuis une page de catégorie */
+    else if ($section == 'reaction'){
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['messageId'])){
             $messageId = $_POST['messageId'];
             $userId = $_SESSION['utilisateur']['IdUser'];
             if (isset($_POST['like'])){
@@ -124,6 +120,21 @@ try {
             }
             else if (isset($_POST['dislike'])){
                 dislike_message($messageId, $userId);
+            }
+            header('Content-Type: application/json');
+            echo json_encode(get_reactions_message($messageId, $userId));
+        }
+    }
+
+    /* si l'utilisateur est sur une page de catégorie jeux video */
+    else if ($section == 'jeux%20video'){
+        /* gestion du tri */ 
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tri'])) {
+            if ($_POST['tri'] === 'Plus récent') {
+                return afficher_page_categorie_trier_par_date(1);
+            } 
+            else if ($_POST['tri'] === 'Plus de Likes') {
+                return afficher_page_categorie_trier_par_likes(1);
             }
         }
         return afficher_page_categorie(1);
@@ -140,18 +151,6 @@ try {
                 return afficher_page_categorie_trier_par_likes(2);
             }
         }
-        /* gestion des likes et dislikes */
-        else if ($_SERVER['REQUEST_METHOD'] == 'POST')
-        {
-            $messageId = $_POST['messageId'];
-            $userId = $_SESSION['utilisateur']['IdUser'];
-            if (isset($_POST['like'])){
-                like_message($messageId, $userId);
-            }
-            else if (isset($_POST['dislike'])){
-                dislike_message($messageId, $userId);
-            }
-        }
         afficher_page_categorie(2);
     }
 
@@ -164,18 +163,6 @@ try {
             } 
             else if ($_POST['tri'] === 'Plus de Likes') {
                 return afficher_page_categorie_trier_par_likes(3);
-            }
-        }
-        /* gestion des likes et dislikes */
-        else if ($_SERVER['REQUEST_METHOD'] == 'POST')
-        {
-            $messageId = $_POST['messageId'];
-            $userId = $_SESSION['utilisateur']['IdUser'];
-            if (isset($_POST['like'])){
-                like_message($messageId, $userId);
-            }
-            else if (isset($_POST['dislike'])){
-                dislike_message($messageId, $userId);
             }
         }
         afficher_page_categorie(3);
@@ -192,18 +179,6 @@ try {
                 return afficher_page_categorie_trier_par_likes(4);
             }
         }
-        /* gestion des likes et dislikes */
-        else if ($_SERVER['REQUEST_METHOD'] == 'POST')
-        {
-            $messageId = $_POST['messageId'];
-            $userId = $_SESSION['utilisateur']['IdUser'];
-            if (isset($_POST['like'])){
-                like_message($messageId, $userId);
-            }
-            else if (isset($_POST['dislike'])){
-                dislike_message($messageId, $userId);
-            }
-        }
         afficher_page_categorie(4);
     }
 
@@ -216,19 +191,6 @@ try {
             } 
             else if ($_POST['tri'] === 'Plus de Likes') {
                 return afficher_page_categorie_trier_par_likes(5);
-            }
-        }
-
-        /* gestion des likes et dislikes */
-        else if ($_SERVER['REQUEST_METHOD'] == 'POST')
-        {
-            $messageId = $_POST['messageId'];
-            $userId = $_SESSION['utilisateur']['IdUser'];
-            if (isset($_POST['like'])){
-                like_message($messageId, $userId);
-            }
-            else if (isset($_POST['dislike'])){
-                dislike_message($messageId, $userId);
             }
         }
         afficher_page_categorie(5);
@@ -245,19 +207,6 @@ try {
                 return afficher_page_categorie_trier_par_likes(6);
             }
         }
-
-        /* gestion des likes et dislikes */
-        else if ($_SERVER['REQUEST_METHOD'] == 'POST')
-        {
-            $messageId = $_POST['messageId'];
-            $userId = $_SESSION['utilisateur']['IdUser'];
-            if (isset($_POST['like'])){
-                like_message($messageId, $userId);
-            }
-            else if (isset($_POST['dislike'])){
-                dislike_message($messageId, $userId);
-            }
-        }
         afficher_page_categorie(6);
     }
 
@@ -272,18 +221,6 @@ try {
                 return afficher_page_categorie_trier_par_likes(7);
             }
         }
-        /* gestion des likes et dislikes */
-        else if ($_SERVER['REQUEST_METHOD'] == 'POST')
-        {
-            $messageId = $_POST['messageId'];
-            $userId = $_SESSION['utilisateur']['IdUser'];
-            if (isset($_POST['like'])){
-                like_message($messageId, $userId);
-            }
-            else if (isset($_POST['dislike'])){
-                dislike_message($messageId, $userId);
-            }
-        }
         afficher_page_categorie(7);
     }
 
@@ -296,18 +233,6 @@ try {
             } 
             else if ($_POST['tri'] === 'Plus de Likes') {
                 return afficher_page_categorie_trier_par_likes(8);
-            }
-        }
-        /* gestion des likes et dislikes */
-        else if ($_SERVER['REQUEST_METHOD'] == 'POST')
-        {
-            $messageId = $_POST['messageId'];
-            $userId = $_SESSION['utilisateur']['IdUser'];
-            if (isset($_POST['like'])){
-                like_message($messageId, $userId);
-            }
-            else if (isset($_POST['dislike'])){
-                dislike_message($messageId, $userId);
             }
         }
         afficher_page_categorie(8);

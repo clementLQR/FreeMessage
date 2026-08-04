@@ -3,331 +3,186 @@
 
 {% block style %}
 <style>
-    /* -----------MOBILE----------- */
-    h1 {
-        font-size: 35px;
-        background-color: rgb(110, 203, 243);
-        color: #212529;
-        border-radius: 10px;
-        width: 90%;
-        float: right;
-        margin-right: 3%;
-        margin-bottom: 5%;
-        padding: 10px;
 
+    .header-categorie {
+        display: flex;
+        gap: 10px;
+    }
+
+    .header-categorie img {
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+        position: relative;
+        top: 3px;
     }
 
     .filtres {
-        width: 290px;
-        margin: auto;
-        font-size: 18px;
-        margin-bottom: 6%;
+        margin: 10px 0;
+        font-size: 0.9em;
+        width: 100%;
     }
 
-    .filtres button,
-    select {
-        font-size: 13px;
-        padding: 2px;
+    .radio-toggle {
+        width: 100%;
     }
 
-    .filtres button {
-        background-color: rgb(110, 203, 243);
-        border-radius: 4px;
-        width: 80px;
-    }
-
-    .filtres button:active,
-    .stats button.active {
-        background-color: rgb(82, 150, 179);
-        transition: transform 0.2s ease, background-color 0.2s ease;
+    .msg-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
     }
 
     .msg {
-        margin: 0 auto 10% auto;
-        width: 100%;
-        background-color: rgba(236, 243, 243, 0.793);
+        border: 1px solid var(--bordure);
         border-radius: 10px;
-        color: #212529;
-        text-align: center;
+        padding: 10px;
+        background-color: var(--surface);
     }
 
-    .haut {
+    .msg p {
+        margin: 10px 0;
+        font-size: 0.875em;
+    }
+
+    .msg .haut {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 4%;
-        background-color: rgb(110, 203, 243);
-        padding: 5px 10px;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-    }
-
-    .haut p {
-        font-size: 11px;
-    }
-
-    .haut h2 {
-        font-size: 17px
+        align-items: center;
     }
 
     .msg img {
-        display: block;
         max-width: 100%;
-        margin: 10px auto 15px auto;
+        height: auto;
+        margin-top: 10px;
+        border-radius: 5px;
+        position: relative;
+        top: -5px;
     }
 
-    .texte {
-        text-align: left;
-        padding: 0 10px 10px 10px;
-        margin: 0;
-        font-size: 16px;
+    .haut span.date {
+        font-size: 0.75em;
+        color: var(--texte-2);
     }
 
     .stats {
         display: flex;
-        justify-content: space-evenly;
+        gap: 30px;
+        margin-top: 10px;
     }
 
-    button img {
-        width: 20px;
-    }
-
-    .stats button {
-        display: inline-flex;
+    .likeBtn, .dislikBtn, .commentBtn {
+        display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 7px;
-        padding: 3px;
-        background: none;
-        color: #212529;
+        gap: 5px;
+        background-color: transparent;
         border: none;
+        cursor: pointer;
+        width: 15px;
+        height: 15px;
     }
 
-    /* -----------TABLETTE----------- */
-    @media only screen and (min-width: 768px) {
-
-        h1 {
-            font-size: 40px;
-            margin-bottom: 3%;
-            margin-right: 4%;
-
-        }
-
-        .filtres {
-            width: 325px;
-            margin: auto;
-            font-size: 20px;
-            margin-bottom: 6%;
-        }
-
-        .filtres button,
-        select {
-            font-size: 16px;
-            padding: 2px;
-        }
-
-        .filtres button {
-            background-color: rgb(110, 203, 243);
-            border-radius: 4px;
-            width: 100px;
-        }
-
-        .msg-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            column-gap: 4%;
-            align-items: start;
-            width: 90%;
-            margin: 0 auto 10%;
-        }
-
-        .msg {
-            background-color: rgba(211, 213, 213, 0.793);
-            border-radius: 10px;
-            padding: 0;
-        }
-
-        .texte {
-            font-size: 18px;
-        }
-
-        .haut {
-            margin-bottom: 4%;
-        }
-
-        .haut p {
-            font-size: 11px;
-        }
-
-        .haut h2 {
-            font-size: 17px
-        }
-
-        .msg img {
-            display: block;
-            max-width: 100%;
-            margin: 10px auto 15px auto;
-        }
-
-        .texte {
-            margin: 0;
-        }
-
-        button img {
-            width: 20px;
-        }
-
-        .stats button {
-            font-size: 15px;
-        }
+    h2 {
+        font-size: 1.2em;
+        margin: 0;
     }
 
-    /* -----------ORDINATEUR----------- */
-    @media only screen and (min-width: 1024px) {
-        h1 {
-            font-size: 40px;
-            margin-bottom: 3%;
-            margin-right: 4%;
 
-        }
-
-        .filtres {
-            width: 325px;
-            margin: auto;
-            font-size: 20px;
-            margin-bottom: 6%;
-        }
-
-        .filtres button,
-        select {
-            font-size: 16px;
-            padding: 2px;
-        }
-
-        .filtres button {
-            background-color: rgb(110, 203, 243);
-            border-radius: 4px;
-            width: 100px;
-            transition: transform 0.2s ease, background-color 0.2s ease;
-            cursor: pointer;
-        }
-
-        .filtres button:hover {
-            transform: scale(1.05);
-            background-color: rgb(90, 170, 200);
-        }
-
-        .msg-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            align-items: start;
-            width: 100%;
-            margin: 0 auto 10% auto;
-        }
-
-        .msg {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-        }
-
-        .msg img {
-            max-width: 100%;
-            margin: 10px auto 15px auto;
-        }
-
-        .haut {
-            margin-bottom: 4%;
-        }
-
-        .haut p {
-            font-size: 11px;
-        }
-
-        .haut h2 {
-            font-size: 17px
-        }
-
-        .texte {
-            padding: 0 10px 10px 10px;
-        }
-
-        button img {
-            width: 20px;
-        }
-
-        .stats button {
-            font-size: 15px;
-        }
-
-        .stats button {
-            transition: transform 0.15s ease;
-            cursor: pointer;
-        }
-
-        .stats button:hover {
-            transform: scale(1.1);
-        }
-    }
 </style>
 
 {% endblock %}
 
 {% block header %}
-<h1>{{categorie.nom}}</h1>
-<!-- <h2>{{categorie.description}}</h2> -->
+<div class="header-categorie">
+    <a href="{{ base_path }}/"><img src="{{ base_path }}/images/chevron-gauche.svg" alt="retourner en arrière"></a>
+    <h1>{{categorie.nom}}</h1>
+</div>
+<form class="filtres" id="formTri" action="{{ base_path }}/{{categorie.nom}}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <fieldset class="radio-toggle">
+        <input type="radio" id="radio-recent" name="tri" value="Plus récent" {% if tri != 'likes' %}checked{% endif %}>
+        <label for="radio-recent">Les plus récents</label>
 
+        <input type="radio" id="radio-likes" name="tri" value="Plus de Likes" {% if tri == 'likes' %}checked{% endif %}>
+        <label for="radio-likes">Les plus likés</label>
+    </fieldset>
+</form>
+<script>
+    document.querySelectorAll('#formTri input[type="radio"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            document.getElementById('formTri').submit();
+        });
+    });
+</script>
 {% endblock %}
 
 
 {% block contenu %}
 <!-- <p>Liste des messages de la categorie {{categorie.nom}}</p> -->
-<form class="filtres" action="{{ base_path }}/{{categorie.nom}}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <label for="tri">Trier par :</label>
-    <select name="tri" id="tri">
-        <option>Plus récent</option>
-        <option>Plus de Likes</option>
-    </select>
-    <button type="submit">Appliquer</button>
-</form>
+
 <div class="msg-container">
     {% for message in messages %}
     <div class="msg">
         <div class="haut">
-            <h2>@{{ message.auteur }}</h2>
-            <p>{{ message.date }}</p>
+            <h2>{{ message.auteur }}</h2>
+            <span class="date">{{ message.date }}</span>
         </div>
-        {% if message.imageSrc %}
-        <img src="{{ message.imageSrc }}" alt="Message Image de {{ message.auteur }}">
-        {% endif %}
         <p class="texte">{{ message.texte }}</p>
+        {% if message.imageSrc %}
+            <img src="{{ message.imageSrc }}" alt="Message Image de {{ message.auteur }}">
+        {% endif %}
         <div class="stats">
+            <button type="button" class="likeBtn" data-type="like" data-message-id="{{ message.IdMsg }}">
+                <img src="{{ base_path }}/images/{% if message.userReactionType == '1' %}like-actif.svg{% else %}like.svg{% endif %}" alt="like">
+                <span class="nbrLike">{{ message.nbrLike }}</span>
+            </button>
+            <button type="button" class="dislikBtn" data-type="dislike" data-message-id="{{ message.IdMsg }}">
+                <img src="{{ base_path }}/images/{% if message.userReactionType == '2' %}dislike-actif.svg{% else %}dislike.svg{% endif %}" alt="dislike">
+                <span class="nbrDislike">{{ message.nbrDislike }}</span>
+            </button>
             <form action="{{ base_path }}/commentaires" method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="messageId" value="{{ message.IdMsg }}">
-                <button type="submit" class="commentBtn"><img src="images/commenter.png"><span>{{
-                        message.nbrCom }}</span></button>
-            </form>
-            <form action="{{ base_path }}/{{ categorie.nom }}" method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <input type="hidden" name="messageId" value="{{ message.IdMsg }}">
-                <input type="hidden" name="like" value="1">
-                <button type="submit" class="likeBtn"><img src="images/like.png"><span>{{ message.nbrLike
-                        }}</span></button>
-            </form>
-            <form action="{{ base_path }}/{{ categorie.nom }}" method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <input type="hidden" name="messageId" value="{{ message.IdMsg }}">
-                <input type="hidden" name="dislike" value="2">
-                <button type="submit" class="dislikBtn"><img src="images/dislike.png"><span>{{
-                        message.nbrDislike
-                        }}</span></button>
+                <button type="submit" class="commentBtn">
+                    <img src="{{ base_path }}/images/commentaire.svg" alt="Commenter">
+                    <span>{{message.nbrCom }}</span>
+                </button>
             </form>
         </div>
     </div>
     {% endfor %}
 </div>
+
+<script>
+    document.querySelectorAll('.likeBtn, .dislikBtn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var msg = btn.closest('.msg');
+            var body = new URLSearchParams({
+                csrf_token: '{{ csrf_token }}',
+                messageId: btn.dataset.messageId
+            });
+            body.set(btn.dataset.type, '1');
+
+            fetch('{{ base_path }}/reaction', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body
+            })
+                .then(function (reponse) { return reponse.json(); })
+                .then(function (donnees) {
+                    msg.querySelector('.nbrLike').textContent = donnees.nbrLike;
+                    msg.querySelector('.nbrDislike').textContent = donnees.nbrDislike;
+
+                    var likeImg = msg.querySelector('.likeBtn img');
+                    var dislikImg = msg.querySelector('.dislikBtn img');
+                    likeImg.src = '{{ base_path }}/images/' + (donnees.userReaction === 'like' ? 'like-actif.svg' : 'like.svg');
+                    dislikImg.src = '{{ base_path }}/images/' + (donnees.userReaction === 'dislike' ? 'dislike-actif.svg' : 'dislike.svg');
+                })
+                .catch(function (erreur) {
+                    console.error('Erreur lors de la réaction :', erreur);
+                });
+        });
+    });
+</script>
 
 {% endblock %}
