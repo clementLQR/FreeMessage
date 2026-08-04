@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+
+</head>
+<style>
+    /* -------------------MOBILE------------------- */
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+    body {
+        background-color: #212529;
+        color: white;
+        min-height: 100vh;
+        height: auto;
+        overflow-y: auto;
+        max-width: 90%;
+        margin: auto;
+        padding-top: 20px;
+        padding-bottom: 80px;
+        
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    footer {
+        display: flex;
+        position: fixed;
+        bottom: 0px;
+        right: 0px;
+        left: 0px;
+        justify-content: space-around;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        background-color: rgb(110, 203, 243);
+    }
+
+    /* main {
+        margin-bottom: 80px;
+    } */
+
+
+    footer img {
+        width: 25px;
+    }
+
+    /* ------------TABLETTE-------------------- */
+
+    footer img {
+        width: 45px;
+    }
+
+    /* ------------ORDINATEUR-------------------- */
+    @media only screen and (min-width : 1024px) {
+        body {
+            max-width: 95%;
+            padding-left: 70px;
+        }
+
+        main {
+            max-width: 80%;
+            margin: auto;
+        }
+
+        footer {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            width: 60px;
+            height: 100vh;
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        footer a {
+            margin: 0;
+        }
+
+        footer img {
+            width: 35px;
+        }
+
+    }
+</style>
+{% block style %}{% endblock %}
+
+<body>
+    
+    <header>
+        {% block header %}
+        {% endblock %}
+    </header>
+
+    <main>
+        {% block contenu %}
+
+        </b>ores doloribus quae hic! Atque fuga quo ipsum dolores magni amet voluptatibus esse itaque.
+        {% endblock %}
+    </main>
+
+    <footer>
+        <a href="/SAE3012/"><img src="images/accueil.png" alt="accueil"></a>
+        <a href="/SAE3012/publier"><img src="images/poster.png" alt="publier"></a>
+        <a href="/SAE3012/profil"><img src="images/profil.png" alt="profil"></a>
+    </footer>
+
+</body>
+
+</html>

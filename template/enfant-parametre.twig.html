@@ -1,0 +1,130 @@
+{% extends 'parent-footer.twig.html' %}
+{% block title %}Paramètres{% endblock %}
+{% block style %}
+<style>
+    /* ---------MOBILE-------- */
+
+    h1 {
+        font-size: 35px;
+        margin-bottom: 20%;
+    }
+
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 70px;
+    }
+
+
+    button {
+        background-color: rgb(110, 203, 243);
+        font-size: 18px;
+        height: 60px;
+        border-radius: 10px;
+        width: 300px;
+        text-align: center;
+        border: none;
+    }
+
+    button:active {
+        background-color: rgb(82, 150, 179);
+        transition: transform 0.2s ease, background-color 0,2s ease;
+    }
+
+    .deco {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background-color: rgba(250, 63, 21, 0.781);
+        border: none;
+
+    }
+
+    button img {
+        width: 25px;
+    }
+
+    /* ---------TABLETTE-------- */
+
+    @media only screen and (min-width: 768px) {
+        h1 {
+            font-size: 40px;
+            margin-bottom: 85px;
+        }
+
+        div {
+            gap: 75px;
+        }
+
+        button {
+            font-size: 25px;
+            height: 70px;
+            width: 400px;
+        }
+
+        button img {
+            width: 27px;
+
+        }
+    }
+
+    /* ---------ORDINATEUR-------- */
+
+    @media only screen and (min-width: 1024px) {
+        h1 {
+            font-size: 60px;
+            margin-bottom: 100px;
+        }
+
+        div {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            gap: 70px;
+        }
+
+        button {
+            font-size: 28px;
+            height: 75px;
+            width: 350px;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background-color: rgb(82, 150, 179);
+        }
+
+        button.deco:hover {
+            transform: scale(1.05);
+            background-color: rgba(179, 49, 22, 0.85);
+        }
+
+        button img {
+            width: 30px;
+
+        }
+    }
+</style>
+
+{% endblock %}
+
+{% block header %}
+<h1>Paramètres</h1>
+{% endblock %}
+
+
+{% block contenu %}
+<div>
+    <a href="/SAE3012/biographie"><button type="submit">Modifier la biographie</button></a>
+
+    <a href="/SAE3012/identifiant"><button type="submit">Changer d'identifiant</button></a>
+
+    <form method="post" action="/SAE3012/deconnexion">
+        <button class="deco" type="submit"><img src="images/se-deconnecter.png"> Déconnexion</button>
+    </form>
+</div>
+{% endblock %}

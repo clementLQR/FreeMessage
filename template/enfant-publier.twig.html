@@ -1,0 +1,180 @@
+{% extends 'parent-footer.twig.html' %}
+{% block title %}Publier{% endblock %}
+
+{% block style %}
+<style>
+    /* --------MOBILE---------- */
+    h1 {
+        font-size: 35px;
+        margin-bottom: 10%;
+
+    }
+
+    .boutons {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        font-size: 20px;
+        border-radius: 20px;
+        padding: 20px;
+        height: 100%;
+    }
+
+    label {
+        margin-bottom: 3%;
+    }
+
+    input,
+    select {
+        margin-bottom: 10%;
+        font-size: 15px;
+        height: 30px;
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    textarea {
+        height: 120px;
+        border-radius: 8px;
+        resize: none;
+        margin-bottom: 20%;
+    }
+
+    button {
+        font-size: 20px;
+        padding: 10px;
+        width: 180px;
+        margin: auto;
+        background-color: rgb(110, 203, 243);
+        border-radius: 10px;
+    }
+
+    button:active {
+        background-color: rgb(82, 150, 179);
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    /* --------------TABLETTE------------ */
+    @media only screen and (min-width: 768px) {
+        h1 {
+            font-size: 40px;
+            margin-bottom: 7%;
+
+        }
+
+        form {
+            font-size: 25px;
+        }
+
+        label {
+            margin-bottom: 2%;
+        }
+
+        input,
+        select {
+            font-size: 18px;
+            height: 40px;
+            padding: 5px;
+        }
+
+        textarea {
+            margin-bottom: 20%;
+        }
+
+        button {
+            font-size: 25px;
+            width: 220px;
+        }
+    }
+
+    /* --------------ORDINATEUR------------ */
+    @media only screen and (min-width: 1024px) {
+        h1 {
+            font-size: 45px;
+            margin-bottom: 4%;
+
+        }
+
+        form {
+            font-size: 35px;
+        }
+
+        label {
+            margin-bottom: 2%;
+        }
+
+        input,
+        select {
+            font-size: 20px;
+            height: 40px;
+            padding: 5px;
+        }
+
+        textarea {
+            margin-bottom: 10%;
+        }
+
+        button {
+            font-size: 30px;
+            width: 300px;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background-color: rgb(82, 150, 179);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+<h1>Publier un message</h1>
+{% endblock %}
+
+
+{% block contenu %}
+<form method="post" action="/SAE3012/publier" enctype="multipart/form-data" class="formPublier">
+    <div>
+        <label for="image"><strong>Image</strong></label>
+        <input type="file" name="image" accept="image/*">
+        <img id="previewImage" src="#" alt="Aperçu de l'image"
+            style="display:none; max-width: 200px; margin-top: 10px;">
+    </div>
+    <label for="idCat"><strong>Catégorie *</strong></label>
+    <select name="idCat" id="idCat" required>
+        <option value="">Choisir une catégorie</option>
+        {% for categorie in categories %}
+        <option value="{{ categorie.IdCat }}">{{ categorie.nom }}</option>
+        {% endfor %}
+    </select>
+    <label for="texte"><strong>Texte *</strong></label>
+    <textarea id="texte" name="texte" required></textarea>
+    <input type="hidden" name="idUser" value="{{ utilisateur.IdUser }}">
+    <button type="submit">Publier</button>
+    </from>
+
+    <script>
+        document.querySelector('input[name="image"]').addEventListener('change', function (event) {
+            const preview = document.getElementById('previewImage');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '#';
+                preview.style.display = 'none';
+            }
+        });
+    </script>
+</form>
+{% endblock %}
