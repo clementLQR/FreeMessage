@@ -33,7 +33,7 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
             $option = "Erreur : jeton de sécurité invalide, veuillez réessayer.";
-            afficher_page_erreur($option);
+            afficher_page_erreur($option, 403);
             exit;
         }
     }
@@ -314,11 +314,11 @@ try {
     /* si la page demandée n'existe pas */
     else{
         $option = "ERREUR : page non trouvée";
-        afficher_page_erreur($option);
+        afficher_page_erreur($option, 404);
     }
 
 } catch (\Throwable $e) {
     // on évite d'exposer la stack trace / les requêtes SQL à l'utilisateur
-    afficher_page_erreur("ERREUR : une erreur interne est survenue");
+    afficher_page_erreur("ERREUR : une erreur interne est survenue", 500);
 }
 ?>

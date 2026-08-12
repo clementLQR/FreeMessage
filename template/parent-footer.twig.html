@@ -167,10 +167,52 @@
 
     /* -------------------TABLETTE----------------- */
 
-
-
     /* -------------------DESKTOP------------------ */
-   
+
+    @media (min-width: 1024px) {
+        body {
+            display: grid;
+            grid-template-columns: 70px 1fr;
+            grid-template-rows: auto 1fr;
+            grid-template-areas:
+                "sidebar header"
+                "sidebar main";
+            height: 100vh;
+        }
+
+        main {
+            margin-bottom: 0;
+            padding: 50px 20%;
+        }
+
+        header {
+            grid-area: header;
+        }
+
+        main {
+            grid-area: main;
+        }
+
+        .footer {
+            grid-area: sidebar;
+            position: static;
+            width: 70px;
+            height: 100%;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            gap: 50px;
+            padding: 20px 10px;
+            border-top: none;
+            border-right: 1px solid var(--bordure);
+        }
+
+        .footer a {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
 </style>
 {% block style %}{% endblock %}
 

@@ -3,7 +3,70 @@
 
 {% block style %}
 <style>
-    
+    .formPublier {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .formPublier label {
+        color: var(--texte-2);
+        font-weight: 400;
+        font-size: 0.875em;
+    }
+
+    .formPublier input[type="file"],
+    .formPublier select,
+    .formPublier textarea {
+        padding: 10px;
+        border: 1px solid var(--bordure);
+        border-radius: 5px;
+        background-color: var(--surface);
+        color: var(--texte);
+        font-family: 'Public Sans', sans-serif;
+        font-size: 0.875em;
+        width: 100%;
+    }
+
+    .formPublier input[type="file"]::file-selector-button {
+        padding: 8px 16px;
+        margin-right: 10px;
+        border: 2px solid var(--bleu-profond);
+        border-radius: 10px;
+        background-color: var(--surface);
+        color: var(--bleu-profond);
+        font-weight: 700;
+        font-family: 'Public Sans', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .formPublier input[type="file"]::file-selector-button:hover {
+        background-color: var(--bleu-clair);
+        transform: translateY(-2px);
+    }
+
+    .formPublier textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .formPublier select:focus,
+    .formPublier textarea:focus {
+        outline: none;
+        border-color: var(--bleu-profond);
+    }
+
+    .formPublier #previewImage {
+        border-radius: 5px;
+        border: 1px solid var(--bordure);
+    }
+
+    .formPublier button {
+        margin-top: 10px;
+    }
+
 </style>
 {% endblock %}
 
@@ -15,7 +78,7 @@
 {% block contenu %}
 <form method="post" action="{{ base_path }}/publier" enctype="multipart/form-data" class="formPublier">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <div>
+    <div class="image-upload">
         <label for="image"><strong>Image</strong></label>
         <input type="file" name="image" accept="image/*">
         <img id="previewImage" src="#" alt="Aperçu de l'image"
@@ -31,8 +94,7 @@
     <label for="texte"><strong>Texte *</strong></label>
     <textarea id="texte" name="texte" required></textarea>
     <input type="hidden" name="idUser" value="{{ utilisateur.IdUser }}">
-    <button type="submit">Publier</button>
-    </from>
+    <button type="submit" class="btn-primary">Publier</button>
 
     <script>
         document.querySelector('input[name="image"]').addEventListener('change', function (event) {

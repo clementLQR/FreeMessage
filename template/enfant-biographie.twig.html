@@ -3,13 +3,67 @@
 
 {% block style %}
 <style>
-   
-</style>
+    header {
+        display: flex;
+        gap: 10px;
+    }
 
+    header img {
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+        position: relative;
+        top: 3px;
+    }
+
+    main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    label {
+        color: var(--texte-2);
+        font-weight: 400;
+        font-size: 0.875em;
+    }
+
+    textarea {
+        padding: 10px;
+        border: 1px solid var(--bordure);
+        border-radius: 5px;
+        background-color: var(--surface);
+        color: var(--texte);
+        font-family: 'Public Sans', sans-serif;
+        font-size: 0.875em;
+        min-height: 120px;
+        resize: vertical;
+        margin-bottom: 10px;
+    }
+
+    textarea:focus {
+        outline: none;
+        border-color: var(--bleu-profond);
+    }
+
+    .buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+</style>
 {% endblock %}
 
 {% block header %}
-<h1>Modifier la biographie</h1>
+<a href="{{ base_path }}/parametre"><img src="{{ base_path }}/images/chevron-gauche.svg" alt="retourner en arrière"></a>
+<h1>Biographie</h1>
 {% endblock %}
 
 
@@ -17,11 +71,11 @@
 
 <form method="post" action="{{ base_path }}/biographie">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <label for="biographie">Rédigez votre biographie : </label>
-    <textarea id="biographie" name="biographie"></textarea>
+    <label for="biographie">Quelques mots sur vous : </label>
+    <textarea id="biographie" name="biographie" placeholder="Décrivez-vous en quelques mots...">{{ utilisateur.biographie }}</textarea>
     <div class="buttons">
-        <button type="submit">Enregistrer</button>
-        <a href="{{ base_path }}/parametre"><button type="button">Annuler</button></a>
+        <button type="submit" class="btn-primary">Enregistrer</button>
+        <a href="{{ base_path }}/parametre"><button type="button" class="btn-rouge">Annuler</button></a>
     </div>
 </form>
 

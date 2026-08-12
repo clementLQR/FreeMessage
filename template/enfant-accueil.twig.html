@@ -58,6 +58,27 @@
         color: var(--texte-2);
         margin-top: 5px;
     }
+
+    /* ---------------DESKTOP--------------- */
+    @media (min-width: 1024px) {
+        .card-container a:nth-child(4n + 2) .card, .card-container a:nth-child(4n + 3) .card{
+            background-color: var(--bleu-clair);
+            color: var(--texte);
+        }
+
+        .card-container a:nth-child(4n + 2) .card img, .card-container a:nth-child(4n + 3) .card img{
+            filter: invert(0);
+        }
+
+        .card-container a:nth-child(4n + 1) .card, .card-container a:nth-child(4n + 3) .card{
+            background-color: var(--bleu-profond);
+            color: var(--surface);
+        }
+
+        .card-container a:nth-child(4n + 1) .card img, .card-container a:nth-child(4n + 3) .card img{
+            filter: invert(1);
+        }
+    }
 </style>
 
 {% endblock %}

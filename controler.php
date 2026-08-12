@@ -16,7 +16,7 @@
             return afficher_page_accueil();
         } else {
             $option = "Erreur d'inscription";
-            afficher_page_erreur($option);
+            afficher_page_erreur($option, 400);
         }
     }
 
@@ -28,7 +28,7 @@
             return afficher_page_accueil();
         } else {
             $option = "Erreur de connexion";
-            afficher_page_erreur($option);
+            afficher_page_erreur($option, 400);
         }
     }
 
@@ -114,7 +114,8 @@
 
     function afficher_page_modifier_biographie(){
         global $twig;
-        echo $twig -> render('enfant-biographie.twig.html');
+        $utilisateur = $_SESSION['utilisateur'];
+        echo $twig -> render('enfant-biographie.twig.html', ['utilisateur' => $utilisateur]);
     }
 
     function update_bio($idUser, $biographie, $utilisateur){
@@ -138,13 +139,14 @@
             return afficher_page_profil($utilisateur);
         } else {
             $option = "Erreur de la modification";
-            afficher_page_erreur($option);
+            afficher_page_erreur($option, 400);
         }
     }
 
     function afficher_page_modifier_identifiant(){
         global $twig;
-        echo $twig -> render('enfant-identifiant.twig.html');
+        $utilisateur = $_SESSION['utilisateur'];
+        echo $twig -> render('enfant-identifiant.twig.html', ['utilisateur' => $utilisateur]);
     }
 
     function afficher_page_deconnexion(){
@@ -153,10 +155,10 @@
         echo $twig -> render('enfant-connexion-inscription.twig.html');
     }
 
-    function afficher_page_erreur($option=null){
+    function afficher_page_erreur($option=null, $code=404){
         global $twig;
-        echo $twig -> render('enfant-erreur.twig.html', 
-        ['option' => $option]);
+        echo $twig -> render('enfant-erreur.twig.html',
+        ['option' => $option, 'code' => $code]);
     }
 
     function like_message($messageId, $userId){
@@ -180,15 +182,28 @@
         ];
     }
 
+    function format_date_admin($date){
+        $mois = ['01' => 'janv.', '02' => 'févr.', '03' => 'mars', '04' => 'avr.', '05' => 'mai', '06' => 'juin',
+                 '07' => 'juil.', '08' => 'août', '09' => 'sept.', '10' => 'oct.', '11' => 'nov.', '12' => 'déc.'];
+        $d = new DateTime($date);
+        return $d->format('d').' '.$mois[$d->format('m')];
+    }
+
     function afficher_page_admin() {
         global $twig;
 
+        $userId = $_SESSION['utilisateur']['IdUser'];
         $categories = [];
 
         for ($i = 1; $i <= 8; $i++) {
+            $messages = get_messages_par_categorie($i, $userId);
+            foreach ($messages as &$message) {
+                $message['dateAffiche'] = format_date_admin($message['date']);
+            }
+            unset($message);
             $categories[] = [
                 'categorie' => get_categorie($i),
-                'messages'  => get_messages_par_categorie($i),
+                'messages'  => $messages,
             ];
         }
 

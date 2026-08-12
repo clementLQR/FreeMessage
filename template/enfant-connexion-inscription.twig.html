@@ -4,6 +4,11 @@
 {% block style %}
 <style>
 
+    main {
+       height: 100vh;
+       margin: 0;
+    }
+
     h1, h3, span {
         text-align: center;
         width: 100%;
@@ -62,6 +67,49 @@
         margin-top: 20px;
     }
 
+    footer{
+        display: none;
+    }
+
+    /* ---------------DESKTOP--------------- */
+
+    @media (min-width: 1024px) {
+        main {
+            padding: 0;
+        }
+
+        .containerConnexionInscription{
+            width: 60%;
+            margin: auto;
+        }
+
+        main {
+            display: flex;
+            flex-direction: row;
+        }
+
+        body {
+            display: flex;
+            flex-direction: row;
+        }
+
+        header{
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bleu-profond);
+            color: var(--surface);
+        }
+
+        header span{
+            color: var(--surface);
+        }
+
+
+    }
+
     
 </style>
 {% endblock %}
@@ -72,7 +120,6 @@
 {% endblock %}
 
 {% block contenu %}
-
 <div class="containerConnexionInscription">
     <fieldset class="radio-toggle">
         <input type="radio" id="radio-connexion" name="mode-auth" value="connexion" checked>

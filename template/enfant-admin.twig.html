@@ -1,94 +1,421 @@
 {% extends 'parent-footer.twig.html' %}
-{% block title %}Page Admin{% endblock %}
+{% block title %}Administration{% endblock %}
 
 {% block style %}
 <style>
+    .admin-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 10px;
+        border: none;
+        background: transparent;
+        color: var(--texte-2);
+        font-weight: 700;
+        font-size: 0.9em;
+        font-family: 'Public Sans', sans-serif;
+        cursor: pointer;
+        text-align: left;
+        margin-bottom: 5px;
+    }
 
+    .admin-nav-item img {
+        width: 18px;
+        height: 18px;
+        filter: invert(30%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(90%) contrast(85%);
+    }
+
+    .admin-nav-item.active {
+        background-color: var(--bleu-clair);
+        color: var(--bleu-profond);
+    }
+
+    .admin-nav-item.active img {
+        filter: invert(36%) sepia(19%) saturate(2256%) hue-rotate(151deg) brightness(91%) contrast(89%);
+    }
+
+    .admin-panel {
+        display: none;
+    }
+
+    .admin-panel.active {
+        display: block;
+    }
+
+    .admin-panel h1 {
+        margin-bottom: 20px;
+    }
+
+    .admin-table-header {
+        display: none;
+    }
+
+    .admin-row-wrap {
+        margin-bottom: 10px;
+    }
+
+    .admin-table-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        background-color: var(--surface);
+        border: 1px solid var(--bordure);
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    .admin-table-row .auteur {
+        font-weight: 700;
+    }
+
+    .admin-table-row .message-texte {
+        font-size: 0.875em;
+        color: var(--texte-2);
+    }
+
+    .admin-table-row .badge {
+        background-color: var(--bleu-clair);
+        color: var(--bleu-profond);
+        padding: 2px 8px;
+        border-radius: 5px;
+        font-size: 0.75em;
+        font-weight: bold;
+        width: fit-content;
+    }
+
+    .admin-table-row .date {
+        font-size: 0.75em;
+        color: var(--texte-2);
+    }
+
+    .admin-table-row form {
+        margin-top: 5px;
+    }
+
+    .admin-comments {
+        background-color: var(--surface);
+        border: 1px solid var(--bordure);
+        border-top: none;
+        border-radius: 0 0 10px 10px;
+        padding: 0 15px;
+    }
+
+    .admin-comments summary {
+        padding: 10px 0;
+        font-size: 0.8em;
+        color: var(--texte-2);
+        cursor: pointer;
+    }
+
+    .admin-comment-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        font-size: 0.8em;
+        border-top: 1px solid var(--bordure);
+    }
+
+    .admin-comment-item p {
+        flex: 1;
+    }
+
+    .sort-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        color: inherit;
+        font: inherit;
+        text-transform: inherit;
+        letter-spacing: inherit;
+        cursor: pointer;
+    }
+
+    .sort-btn::after {
+        content: '↕';
+        opacity: 0.4;
+        font-size: 0.9em;
+    }
+
+    .sort-btn[data-dir="asc"] {
+        color: var(--bleu-profond);
+    }
+
+    .sort-btn[data-dir="asc"]::after {
+        content: '↑';
+        opacity: 1;
+    }
+
+    .sort-btn[data-dir="desc"] {
+        color: var(--bleu-profond);
+    }
+
+    .sort-btn[data-dir="desc"]::after {
+        content: '↓';
+        opacity: 1;
+    }
+
+    .admin-search {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        padding: 10px 15px;
+        margin-bottom: 20px;
+        border: 1px solid var(--bordure);
+        border-radius: 10px;
+        background-color: var(--surface);
+        color: var(--texte);
+        font-family: 'Public Sans', sans-serif;
+        font-size: 0.875em;
+    }
+
+    .admin-search:focus {
+        outline: none;
+        border-color: var(--bleu-profond);
+    }
+
+    /* ---------------DESKTOP--------------- */
+    @media (min-width: 1024px) {
+        body {
+            grid-template-columns: 1fr;
+            grid-template-areas:
+                "header"
+                "main";
+        }
+
+        header {
+            display: none;
+        }
+
+        .footer {
+            display: none;
+        }
+
+        main {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .admin-layout {
+            display: flex;
+            height: 100%;
+        }
+
+        .admin-sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background-color: var(--surface);
+            border-right: 1px solid var(--bordure);
+            padding: 30px 20px;
+        }
+
+        .admin-sidebar h2 {
+            color: var(--bleu-profond);
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .admin-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 50px;
+            background-color: var(--fond);
+        }
+
+        .admin-table-header {
+            display: grid;
+            grid-template-columns: 160px 1fr 140px 90px 110px;
+            padding: 0 15px 10px;
+            color: var(--texte-2);
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .admin-table-row {
+            display: grid;
+            grid-template-columns: 160px 1fr 140px 90px 110px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-table-row .message-texte {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--texte);
+        }
+
+        .admin-table-row form {
+            margin-top: 0;
+            justify-self: end;
+        }
+
+        .admin-panel-comptes .admin-table-header,
+        .admin-panel-comptes .admin-table-row {
+            grid-template-columns: 200px 1fr 110px;
+        }
+    }
 </style>
 {% endblock %}
 
-{% block contenu %}
-    <h1>Page Admin</h1>
-
-    <section>
-        <h2>Utilisateurs</h2>
-    </section>
-    
-    <div class="utilisateur">
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Nom d'utilisateur</th>
-                <th>Biographie</th>
-                <th>Actions</th>
-            </tr>
-            {% for utilisateur in utilisateurs %}
-            {% if utilisateur.identifiant != 'admin' %}
-            <tr>
-                <td>{{ utilisateur.IdUser }}</td>
-                <td>{{ utilisateur.identifiant }}</td>
-                <td>{{ utilisateur.biographie }}</td>
-                <td>
-                    <form action="{{ base_path }}/admin" method="post">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                        <input type="hidden" name="supprimerUserId" value="{{ utilisateur.IdUser }}">
-                        <button type="submit">Supprimer</button>
-                    </form>
-                </td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-        </table>
-    </div>
-
-{% for bloc in categories %}
-
-    <section class="categorie">
-    <h2>Catégorie: {{ bloc.categorie.nom }}</h2>
-    </section>
-
-    {% for message in bloc.messages %}
-        <h2>Messages</h2>
-
-        <div class="msg-container">
-            <div class="msg">
-                <div class="haut">
-                    <h2>@{{ message.auteur }}</h2>
-                    <p>{{ message.date }}</p>
-                </div>
-
-                {% if message.imageSrc %}
-                    <img src="{{ message.imageSrc }}" alt="Message Image de {{ message.auteur }}">
-                {% endif %}
-
-                <p class="texte">{{ message.texte }}</p>
-            </div>
-            <form action="{{ base_path }}/admin" method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <input type="hidden" name="supprimerMessageId" value="{{ message.IdMsg }}">
-                <button type="submit">Supprimer le message</button>
-            </form>      
-        </div>
-        <div class="commentaires-section">
-            <h2>Commentaires du message</h2>
-            {% for commentaire in commentaires %}
-                {% if commentaire.IdMsg == message.IdMsg %}
-                    <div class="commentaire">
-                        <p><strong>@{{ commentaire.auteur }}:</strong> {{ commentaire.texte }}</p>
-                        <form action="{{ base_path }}/admin" method="post">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                            <input type="hidden" name="supprimerCommentaireId" value="{{ commentaire.IdComment }}">
-                            <button type="submit">Supprimer</button>
-                        </form>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-
-    {% endfor %}
-
-{% endfor %}
-
-
+{% block header %}
+<h1>Administration</h1>
 {% endblock %}
 
+
+{% block contenu %}
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <h2>Administration</h2>
+        <nav>
+            <button type="button" class="admin-nav-item active" data-panel="publications">
+                <img src="{{ base_path }}/images/commentaire.svg" alt="">
+                Publications
+            </button>
+            <button type="button" class="admin-nav-item" data-panel="comptes">
+                <img src="{{ base_path }}/images/profil.svg" alt="">
+                Comptes
+            </button>
+        </nav>
+    </aside>
+
+    <section class="admin-content">
+        <div class="admin-panel admin-panel-publications active">
+            <h1>Publications</h1>
+            <input type="search" class="admin-search" placeholder="Rechercher une publication..." data-target="admin-panel-publications">
+            <div class="admin-table-header">
+                <button type="button" class="sort-btn" data-sort="auteur">Auteur</button>
+                <button type="button" class="sort-btn" data-sort="message">Message</button>
+                <button type="button" class="sort-btn" data-sort="categorie">Catégorie</button>
+                <button type="button" class="sort-btn" data-sort="date">Date</button>
+                <span></span>
+            </div>
+            {% for bloc in categories %}
+                {% for message in bloc.messages %}
+                <div class="admin-row-wrap"
+                    data-auteur="{{ message.auteur }}"
+                    data-message="{{ message.texte }}"
+                    data-categorie="{{ bloc.categorie.nom }}"
+                    data-date="{{ message.date }}">
+                    <div class="admin-table-row">
+                        <span class="auteur">{{ message.auteur }}</span>
+                        <span class="message-texte">{{ message.texte }}</span>
+                        <span class="badge">{{ bloc.categorie.nom }}</span>
+                        <span class="date">{{ message.dateAffiche }}</span>
+                        <form action="{{ base_path }}/admin" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <input type="hidden" name="supprimerMessageId" value="{{ message.IdMsg }}">
+                            <button type="submit" class="btn-rouge">Supprimer</button>
+                        </form>
+                    </div>
+                    {% set nbrCommentaires = 0 %}
+                    {% for commentaire in commentaires %}
+                        {% if commentaire.IdMsg == message.IdMsg %}
+                            {% set nbrCommentaires = nbrCommentaires + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if nbrCommentaires > 0 %}
+                    <details class="admin-comments">
+                        <summary>{{ nbrCommentaires }} commentaire{{ nbrCommentaires > 1 ? 's' : '' }}</summary>
+                        {% for commentaire in commentaires %}
+                            {% if commentaire.IdMsg == message.IdMsg %}
+                            <div class="admin-comment-item">
+                                <p><strong>{{ commentaire.auteur }}</strong> : {{ commentaire.texte }}</p>
+                                <form action="{{ base_path }}/admin" method="post">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <input type="hidden" name="supprimerCommentaireId" value="{{ commentaire.IdComment }}">
+                                    <button type="submit" class="btn-rouge">Supprimer</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </details>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <div class="admin-panel admin-panel-comptes">
+            <h1>Comptes</h1>
+            <input type="search" class="admin-search" placeholder="Rechercher un compte..." data-target="admin-panel-comptes">
+            <div class="admin-table-header">
+                <button type="button" class="sort-btn" data-sort="identifiant">Identifiant</button>
+                <button type="button" class="sort-btn" data-sort="biographie">Biographie</button>
+                <span></span>
+            </div>
+            {% for utilisateur in utilisateurs %}
+                {% if utilisateur.identifiant != 'admin' %}
+                <div class="admin-row-wrap"
+                    data-identifiant="{{ utilisateur.identifiant }}"
+                    data-biographie="{{ utilisateur.biographie }}">
+                    <div class="admin-table-row">
+                        <span class="auteur">{{ utilisateur.identifiant }}</span>
+                        <span class="message-texte">{{ utilisateur.biographie }}</span>
+                        <form action="{{ base_path }}/admin" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <input type="hidden" name="supprimerUserId" value="{{ utilisateur.IdUser }}">
+                            <button type="submit" class="btn-rouge">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<script>
+    document.querySelectorAll('.admin-nav-item').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.admin-nav-item').forEach(function (b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            document.querySelectorAll('.admin-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelector('.admin-panel-' + btn.dataset.panel).classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('.sort-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var key = btn.dataset.sort;
+            var header = btn.closest('.admin-table-header');
+            var panel = header.parentElement;
+            var rows = Array.from(panel.querySelectorAll(':scope > .admin-row-wrap'));
+            var asc = btn.dataset.dir !== 'asc';
+
+            header.querySelectorAll('.sort-btn').forEach(function (b) { b.removeAttribute('data-dir'); });
+            btn.dataset.dir = asc ? 'asc' : 'desc';
+
+            rows.sort(function (a, b) {
+                var va = a.dataset[key] || '';
+                var vb = b.dataset[key] || '';
+                return asc
+                    ? va.localeCompare(vb, 'fr', { numeric: true })
+                    : vb.localeCompare(va, 'fr', { numeric: true });
+            });
+            rows.forEach(function (row) { panel.appendChild(row); });
+        });
+    });
+
+    document.querySelectorAll('.admin-search').forEach(function (input) {
+        input.addEventListener('input', function () {
+            var term = input.value.trim().toLowerCase();
+            var panel = document.querySelector('.' + input.dataset.target);
+            panel.querySelectorAll(':scope > .admin-row-wrap').forEach(function (row) {
+                var haystack = Object.values(row.dataset).join(' ').toLowerCase();
+                row.style.display = haystack.includes(term) ? '' : 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

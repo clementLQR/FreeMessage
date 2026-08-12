@@ -92,7 +92,7 @@
         display: none;
     }
 
-    footer form {
+    .footer-commentaire form {
         display: flex;
         gap: 10px;
         align-items: center;
@@ -100,7 +100,7 @@
         width: 100%;
     }
 
-    footer textarea {
+    .footer-commentaire textarea {
         flex: 1;
         padding: 10px;
         border-radius: 9999px;
@@ -130,6 +130,40 @@
 
     main {
         margin-bottom: 60px;
+    }
+
+    /* ---------------DESKTOP--------------- */
+    @media (min-width: 1024px) {
+        main {
+            margin-bottom: 0;
+        }
+        .footer{
+            display: flex;
+        }
+        
+        .commentaire {
+            margin: 30px 0;
+        }
+
+        .footer-commentaire {
+            left: 70px;
+            right: 0;
+            width: auto;
+            margin: 0;
+            padding: 0 20%;
+            box-sizing: border-box;
+            background-color: transparent;
+            border: none;
+            bottom: 20px;
+        }
+
+        .footer-commentaire form {
+            padding: 0;
+        }
+
+        .footer-commentaire textarea {
+            background-color: var(--surface);
+        }
     }
 </style>
 {% endblock %}
@@ -181,7 +215,7 @@
 </div>
 {% endfor %}
 
-<footer>
+<footer class="footer-commentaire">
     <form action="{{ base_path }}/commentaires" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <input type="hidden" name="messageId" value="{{ messages.IdMsg }}">
