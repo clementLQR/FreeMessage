@@ -178,7 +178,7 @@
 <div class="msg">
     <div class="haut">
         <h2>{{ messages.auteur }}</h2>
-        <span class="date">{{ messages.date }}</span>
+        <span class="date">{{ messages.date|date_fr }}</span>
     </div>
     <p class="texte">{{ messages.texte }}</p>
     {% if messages.imageSrc %}
@@ -209,7 +209,7 @@
 <div class="commentaire">
     <div class="haut">
         <h4>{{ commentaire.auteur }}</h4>
-        <span class="date">{{ commentaire.dateCom }}</span>
+        <span class="date">{{ commentaire.dateCom|date_fr }}</span>
     </div>
     <p>{{ commentaire.texte }}</p>
 </div>

@@ -182,13 +182,6 @@
         ];
     }
 
-    function format_date_admin($date){
-        $mois = ['01' => 'janv.', '02' => 'févr.', '03' => 'mars', '04' => 'avr.', '05' => 'mai', '06' => 'juin',
-                 '07' => 'juil.', '08' => 'août', '09' => 'sept.', '10' => 'oct.', '11' => 'nov.', '12' => 'déc.'];
-        $d = new DateTime($date);
-        return $d->format('d').' '.$mois[$d->format('m')];
-    }
-
     function afficher_page_admin() {
         global $twig;
 
@@ -196,14 +189,9 @@
         $categories = [];
 
         for ($i = 1; $i <= 8; $i++) {
-            $messages = get_messages_par_categorie($i, $userId);
-            foreach ($messages as &$message) {
-                $message['dateAffiche'] = format_date_admin($message['date']);
-            }
-            unset($message);
             $categories[] = [
                 'categorie' => get_categorie($i),
-                'messages'  => $messages,
+                'messages'  => get_messages_par_categorie($i, $userId),
             ];
         }
 

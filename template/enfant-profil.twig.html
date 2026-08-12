@@ -178,7 +178,7 @@
         <div class="haut">
             <span class="badge">{{ message.categorieNom }}</span>
             <div>
-                <span class="date">{{ message.date }}</span>
+                <span class="date">{{ message.date|date_fr }}</span>
                 <form action="{{ base_path }}/profil" method="post">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     <input type="hidden" name="messageId" value="{{ message.IdMsg }}">

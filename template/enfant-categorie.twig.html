@@ -132,7 +132,7 @@
     <div class="msg">
         <div class="haut">
             <h2>{{ message.auteur }}</h2>
-            <span class="date">{{ message.date }}</span>
+            <span class="date">{{ message.date|date_fr }}</span>
         </div>
         <p class="texte">{{ message.texte }}</p>
         {% if message.imageSrc %}

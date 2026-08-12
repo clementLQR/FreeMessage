@@ -311,7 +311,7 @@
                         <span class="auteur">{{ message.auteur }}</span>
                         <span class="message-texte">{{ message.texte }}</span>
                         <span class="badge">{{ bloc.categorie.nom }}</span>
-                        <span class="date">{{ message.dateAffiche }}</span>
+                        <span class="date">{{ message.date|date_fr }}</span>
                         <form action="{{ base_path }}/admin" method="post">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                             <input type="hidden" name="supprimerMessageId" value="{{ message.IdMsg }}">
